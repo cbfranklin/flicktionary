@@ -44,6 +44,10 @@ io.on("connection", function(socket) {
     socket.broadcast.emit("USERS", { users: game.users });
     socket.emit("USERS", { users: game.users });
   });
+  socket.on("PICK_FILM", function (data) {
+    console.log(`${data.title}: ${data.plot}`);
+    socket.broadcast.emit("FILM_PICKED", { title: data.title });
+  });
 });
 
 const setInitialUserWhoIsIt = () => {

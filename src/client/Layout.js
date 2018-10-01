@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import Users from "./Users";
 import SetUsername from "./SetUsername";
-import StartGame from "./StartGame";
+import PickFilm from "./PickFilm";
 class Layout extends Component {
   constructor(props) {
     super(props);
@@ -12,7 +12,7 @@ class Layout extends Component {
       <div>
         <SetUsername />
         <Users />
-        <StartGame/>
+        <PickFilm/>
       </div>
     );
   }

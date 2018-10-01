@@ -8,7 +8,7 @@ class SetUsername extends Component {
       username: ""
     };
 
-    this.setUsername = e => {
+    this.handleSetUsername = e => {
       e.preventDefault();
       this.props.socket.emit("SET_USERNAME", {
         username: this.state.username
@@ -30,7 +30,7 @@ class SetUsername extends Component {
                 className="form-control"
               />
               <button
-                onClick={this.setUsername}
+                onClick={this.handleSetUsername}
                 className="btn btn-primary form-control"
               >
                 Send

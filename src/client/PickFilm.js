@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import SocketContext from "./SocketContext";
 
-class StartGame extends Component {
+class PickFilm extends Component {
     constructor(props) {
         super(props);
 
@@ -13,6 +13,14 @@ class StartGame extends Component {
             console.log("USERS!");
             updateUsers(data.users);
         });
+
+        this.handlePickFilm = e => {
+            e.preventDefault();
+            this.props.socket.emit("PICK_FILM", {
+                title: 'Open Your Eyes',
+                plot: 'A flamboyant optometrist resigned to a life of solitude re-encounters an old flame in a hot tub.'
+            });
+        };
 
         const updateUsers = data => {
             this.setState({
@@ -33,12 +41,12 @@ class StartGame extends Component {
     render() {
         const StartButton = () =>
         <button
-            onClick={this.setUsername}
+            onClick={this.handlePickFilm}
             className="btn btn-primary form-control">
-            Start
+            Pick the demo film
         </button>;
 
-        const Waiting = () => <p>Waiting for {this.state.itsName} to start the game</p>;
+        const Waiting = () => <p>Waiting for {this.state.itsName} to pick a film</p>;
 
         return (
             <section className="username">
@@ -54,10 +62,10 @@ class StartGame extends Component {
     }
 }
 
-const StartGameWithSocket = props => (
+const PickFilmWithSocket = props => (
   <SocketContext.Consumer>
-    {socket => <StartGame {...props} socket={socket} />}
+    {socket => <PickFilm {...props} socket={socket} />}
   </SocketContext.Consumer>
 );
 
-export default StartGameWithSocket;
+export default PickFilmWithSocket;
