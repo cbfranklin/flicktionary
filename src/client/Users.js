@@ -21,18 +21,19 @@ class Users extends Component {
   }
 
   render() {
-    const userList = this.state.users.map((user, i) => <li className={user.it && 'user-is-it'} key={i}>{user.username}</li>);
+    const userList = this.state.users.map((user, i) => (
+      <li className={user.it && "user-is-it"} key={i}>
+        {user.username}
+      </li>
+    ));
 
     return (
-      <section className="username">
-        <div className="container">
-          <div className="row">
-            <div className="col-xs-12">
-              <ul className="list-pipe">{userList}</ul>
-            </div>
-          </div>
+      <div className="row">
+        <div className="col-xs-12">
+          <h3>Players</h3>
+          <ul className="list-pipe">{userList}</ul>
         </div>
-      </section>
+      </div>
     );
   }
 }

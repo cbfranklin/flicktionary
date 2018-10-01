@@ -18,8 +18,7 @@ class SetUsername extends Component {
 
   render() {
     return (
-      <section className="username">
-        <div className="container">
+
           <div className="row">
             <div className="col-xs-12">
               <input
@@ -33,12 +32,11 @@ class SetUsername extends Component {
                 onClick={this.handleSetUsername}
                 className="btn btn-primary form-control"
               >
-                Send
+                Set Username
               </button>
             </div>
           </div>
-        </div>
-      </section>
+
     );
   }
 }

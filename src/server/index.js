@@ -9,7 +9,6 @@ const game = {
 };
 
 app.use(express.static("dist"));
-app.get("/api/getUsername", (req, res) => res.send({ username: "buttface" }));
 server.listen(8080, () => console.log("Listening on port 8080!"));
 
 io.on("connection", function(socket) {
@@ -24,6 +23,7 @@ io.on("connection", function(socket) {
   console.table(game.users);
   socket.broadcast.emit("USERS", { users: game.users });
   socket.emit("USERS", { users: game.users });
+
   // on disconnect...
   socket.on("disconnect", function() {
     // remove user from db
@@ -47,6 +47,9 @@ io.on("connection", function(socket) {
   socket.on("PICK_FILM", function (data) {
     console.log(`${data.title}: ${data.plot}`);
     socket.broadcast.emit("FILM_PICKED", { title: data.title });
+    socket.emit("FILM_PICKED", { title: data.title });
+    socket.broadcast.emit("USERS", { users: game.users });
+    socket.emit("USERS", { users: game.users });
   });
 });
 
