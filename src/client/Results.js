@@ -1,12 +1,10 @@
 import React, { Component } from "react";
 
-class VoteForPlot extends Component {
+class Results extends Component {
   constructor(props) {
     super(props);
 
-    this.state = {
-      voted: false
-    };
+    this.state = {};
   }
 
   render() {
@@ -50,4 +48,4 @@ class VoteForPlot extends Component {
   }
 }
 
-export default VoteForPlot;
+export default Results;

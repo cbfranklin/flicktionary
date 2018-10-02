@@ -111,9 +111,8 @@ io.on("connection", function(socket) {
   });
 
   socket.on("plot-voted", function (data) {
-    // plotID is just socket.id of plot creator
-    const plotID = data.plot;
-    voteForPlot(plotID);
+    const plotIndex = data.plot;
+    voteForPlot(plotIndex);
     // if all votes are in, next stage!
     if(allVotesIn()){
       assignPlotVotesToUsers();
@@ -125,6 +124,8 @@ io.on("connection", function(socket) {
   socket.on("new-round", function (data) {
     game.round = templates.round;
   });
+
+
 });
 
 const updateGameForAllUsers = (socket) => {
@@ -154,8 +155,7 @@ const userData = (socketID) => {
   return game.users[index];
 }
 
-const voteForPlot = socketID => {
-  const index = game.round.plots.findIndex(plot => plot.creator === socketID);
+const voteForPlot = index => {
   console.log(`Vote for ${game.round.plots[index].creator}`);
   game.round.plots[index].votes++;
 };
@@ -187,7 +187,7 @@ const templates = {
 
 const allVotesIn = () => {
   let votes = 0;
-  for(plot in game.round.plots){
+  for(plot of game.round.plots){
     votes += plot.votes
   }
   if(votes === game.users.length - 1){

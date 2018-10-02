@@ -8,7 +8,7 @@ class AcceptFilm extends Component {
   }
 
   render() {
-    const { it, iAmIt, title } = this.props;
+    const { it, iAmIt, title, filmAccepted } = this.props;
     const StartButton = () => (
       <div>
         <div className="row">
@@ -48,7 +48,7 @@ class AcceptFilm extends Component {
 
     return (
       <div className="row">
-        <div className="col-xs-12">{iAmIt ? <Waiting /> : <StartButton />}</div>
+        <div className="col-xs-12">{iAmIt || filmAccepted ? <Waiting /> : <StartButton />}</div>
       </div>
     );
   }

@@ -12,12 +12,4 @@ class Layout extends Component {
   }
 }
 
-// const LayoutWithSocket = props => (
-//   <SocketContext.Consumer>
-//     {socket => <Layout {...props} socket={socket} />}
-//   </SocketContext.Consumer>
-// );
-
-
-// export default LayoutWithSocket;
 export default Layout;

@@ -47,9 +47,8 @@ class GameBoard extends Component {
   handleChooseFilm = e => {
     e.preventDefault();
     socket.emit("film-chosen", {
-      title: "Open Your Eyes",
-      plot:
-        "A flamboyant optometrist resigned to a life of solitude re-encounters an old flame in a hot tub."
+      title: "THE FILM NAME",
+      plot: "THE REAL PLOT"
     });
   };
   handleAcceptFilm = e => {
@@ -69,7 +68,6 @@ class GameBoard extends Component {
     });
   };
   handleChangePlot = e => {
-    e.preventDefault();
     this.setState({
       plot: e.target.value
     });
@@ -79,6 +77,7 @@ class GameBoard extends Component {
     this.setState({
         plotSubmitted: true
     });
+    console.log('plot',this.state.plot)
     socket.emit("plot-written", {
       plot: this.state.plot
     });
@@ -125,7 +124,7 @@ class GameBoard extends Component {
               it={it}
               iAmIt={iAmIt}
               handleAcceptFilm={this.handleAcceptFilm}
-              title={game.round.title},
+              title={game.round.title}
               filmAccepted={this.state.filmAccepted}
             />
           );
@@ -136,7 +135,9 @@ class GameBoard extends Component {
               iAmIt={iAmIt}
               title={game.round.title}
               handleSubmitPlot={this.handleSubmitPlot}
+              handleChangePlot={this.handleChangePlot}
               plotSubmitted={this.state.plotSubmitted}
+              plot={this.state.plot}
             />
           );
         } else if (stage === "vote-for-plot") {
