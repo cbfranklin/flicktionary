@@ -13,8 +13,8 @@ class AcceptFilm extends Component {
       <div>
         <div className="row">
           <div className="col-xs-12">
-            <h4 class="text-center">{this.props.it} proposes the film:</h4>
-            <h2 class="text-center">{title}</h2>
+            <h4 className="text-center">{this.props.it} proposes the film:</h4>
+            <h2 className="text-center">{title}</h2>
           </div>
         </div>
         <div className="row">
@@ -41,7 +41,7 @@ class AcceptFilm extends Component {
     );
 
     const Waiting = () => (
-      <p class="text-center">
+      <p className="text-center">
             Waiting for opponents to accept <strong>{title}</strong>
       </p>
     );

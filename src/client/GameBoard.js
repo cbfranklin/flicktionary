@@ -8,6 +8,7 @@ import WritePlot from "./WritePlot";
 import UserList from "./UserList";
 import SetUsername from "./SetUsername";
 import Lobby from "./Lobby";
+import VoteForPlot from "./VoteForPlot";
 
 const socket = io("localhost:3001");
 
@@ -60,11 +61,37 @@ class GameBoard extends Component {
     } else {
       (accepted = false), console.log("declined");
     }
+    this.setState({
+        filmAccepted: true
+    })
     socket.emit("film-accepted", {
       accept: accepted
     });
   };
-
+  handleChangePlot = e => {
+    e.preventDefault();
+    this.setState({
+      plot: e.target.value
+    });
+  };
+  handleSubmitPlot = e => {
+    e.preventDefault();
+    this.setState({
+        plotSubmitted: true
+    });
+    socket.emit("plot-written", {
+      plot: this.state.plot
+    });
+  };
+  handleVotePlot = e => {
+    e.preventDefault();
+    this.setState({
+        plotVoted: true
+    })
+    socket.emit("plot-voted", {
+      plot: e.target.value
+    });
+  };
   render() {
     const game = this.state.game;
     // make sure socket is connected and game obj exists before rendering
@@ -98,11 +125,31 @@ class GameBoard extends Component {
               it={it}
               iAmIt={iAmIt}
               handleAcceptFilm={this.handleAcceptFilm}
-              title={game.round.title}
+              title={game.round.title},
+              filmAccepted={this.state.filmAccepted}
             />
           );
         } else if (stage === "write-plot") {
-          return <WritePlot it={it} iAmIt={iAmIt} title={game.round.title} />;
+          return (
+            <WritePlot
+              it={it}
+              iAmIt={iAmIt}
+              title={game.round.title}
+              handleSubmitPlot={this.handleSubmitPlot}
+              plotSubmitted={this.state.plotSubmitted}
+            />
+          );
+        } else if (stage === "vote-for-plot") {
+          return (
+            <VoteForPlot
+              it={it}
+              iAmIt={iAmIt}
+              title={game.round.title}
+              plots={game.round.plots}
+              handleVotePlot={this.handleVotePlot}
+              plotVoted={this.state.plotVoted}
+            />
+          );
         } else {
           return <div>No component for this stage...</div>;
         }

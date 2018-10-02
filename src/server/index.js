@@ -77,6 +77,7 @@ io.on("connection", function(socket) {
   socket.on("film-accepted", function(data) {
     // vote is true or false
     const accept = data.accept;
+    console.log(`Film accepted: ${accept}`)
     if (accept === false) {
       // need to chose another film
       game.round.stage = "choose-film";
@@ -85,7 +86,7 @@ io.on("connection", function(socket) {
       game.round.accepts.push(accept);
       // if all votes are in and all votes are true
       if (
-        game.round.accepts.length - 1 === game.users.length &&
+        (game.round.accepts.length === game.users.length - 1) &&
         game.round.accepts.every(isTrue)
       ) {
         game.round.stage = "write-plot";
@@ -155,6 +156,7 @@ const userData = (socketID) => {
 
 const voteForPlot = socketID => {
   const index = game.round.plots.findIndex(plot => plot.creator === socketID);
+  console.log(`Vote for ${game.round.plots[index].creator}`);
   game.round.plots[index].votes++;
 };
 
