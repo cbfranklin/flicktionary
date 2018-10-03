@@ -31,13 +31,13 @@ class VoteForPlot extends Component {
     };
     const Vote = () => (
       <div>
-        <h2 className="text-center">Vote for a plot</h2>
+        <h2 >Vote for a plot</h2>
         <Plots />
       </div>
     );
 
     const Waiting = () => (
-      <p className="text-center">Waiting for opponents to vote</p>
+      <p >Waiting for opponents to vote</p>
     );
 
     return (

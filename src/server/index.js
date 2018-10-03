@@ -23,7 +23,7 @@ server.listen(3001, () => console.log("Listening on port 3001!"));
 // SOCKETS
 // new player joins
 io.on("connection", function(socket) {
-  console.log('new connection')
+  console.log("new connection");
   // add user to db
   game.users.push({
     username: ragtimers.shift(),
@@ -41,6 +41,10 @@ io.on("connection", function(socket) {
     // update user list for all clients
     setInitialUserWhoIsIt();
     updateGameForAllUsers(socket);
+
+    if (game.users.length === 0) {
+      newRound();
+    }
   });
 
   socket.on("username-set", function(data) {
@@ -50,11 +54,11 @@ io.on("connection", function(socket) {
   });
 
   // set stage when directed by qualified client
-  socket.on("stage-set", function(data){
+  socket.on("stage-set", function(data) {
     game.round.stage = data.stage;
-    console.log(data.stage)
+    console.log(data.stage);
     updateGameForAllUsers(socket);
-  })
+  });
 
   // IT has chosen a film
   socket.on("film-chosen", function(data) {
@@ -77,7 +81,7 @@ io.on("connection", function(socket) {
   socket.on("film-accepted", function(data) {
     // vote is true or false
     const accept = data.accept;
-    console.log(`Film accepted: ${accept}`)
+    console.log(`Film accepted: ${accept}`);
     if (accept === false) {
       // need to chose another film
       game.round.stage = "choose-film";
@@ -86,7 +90,7 @@ io.on("connection", function(socket) {
       game.round.accepts.push(accept);
       // if all votes are in and all votes are true
       if (
-        (game.round.accepts.length === game.users.length - 1) &&
+        game.round.accepts.length === game.users.length - 1 &&
         game.round.accepts.every(isTrue)
       ) {
         game.round.stage = "write-plot";
@@ -104,56 +108,58 @@ io.on("connection", function(socket) {
     };
 
     game.round.plots.push(plot);
-    if (game.round.plots.length === game.users.length){
+    if (game.round.plots.length === game.users.length) {
       game.round.stage = "vote-for-plot";
     }
     updateGameForAllUsers(socket);
   });
 
-  socket.on("plot-voted", function (data) {
+  socket.on("plot-voted", function(data) {
     const plotIndex = data.plot;
     voteForPlot(plotIndex);
     // if all votes are in, next stage!
-    if(allVotesIn()){
+    if (allVotesIn()) {
       assignPlotVotesToUsers();
       game.round.stage = "results";
     }
     updateGameForAllUsers(socket);
   });
 
-  socket.on("new-round", function (data) {
-    game.round = templates.round;
+  socket.on("new-round", function(data) {
+    newRound();
   });
-
-
 });
 
-const updateGameForAllUsers = (socket) => {
+const newRound = () => {
+  game.round = templates.round;
+};
+
+const updateGameForAllUsers = socket => {
   socket.broadcast.emit("game-update", { game: game });
   socket.emit("game-update", { game: game });
 };
 
 const assignPlotVotesToUsers = () => {
-  for(plot of game.round.plots){
+  for (plot of game.round.plots) {
     // if it was the real plot and it got no votes, give creator 1 point per opponent
-    if(plot.isReal && plot.votes === 0){
-      userData(plot.creator).points += game.users.length - 1
+    if (plot.isReal && plot.votes === 0) {
+      userData(plot.creator).points += game.users.length - 1;
     }
     // if it was a fake plot, apply all votes to creator as points
-    if(!plot.isReal){
-      userData(plot.creator).points += plot.votes
+    if (!plot.isReal) {
+      userData(plot.creator).points += plot.votes;
     }
   }
-}
+};
 
-const userIndex = (socketID) => {
+const userIndex = socketID => {
   return game.users.findIndex(user => user.id === socketID);
-}
+};
 
-const userData = (socketID) => {
+const userData = socketID => {
   const index = game.users.findIndex(user => user.id === socketID);
   return game.users[index];
-}
+};
 
 const voteForPlot = index => {
   console.log(`Vote for ${game.round.plots[index].creator}`);
@@ -174,8 +180,6 @@ const setInitialUserWhoIsIt = () => {
   }
 };
 
-
-
 const templates = {
   round: {
     stage: "lobby",
@@ -187,16 +191,15 @@ const templates = {
 
 const allVotesIn = () => {
   let votes = 0;
-  for(plot of game.round.plots){
-    votes += plot.votes
+  for (plot of game.round.plots) {
+    votes += plot.votes;
   }
-  if(votes === game.users.length - 1){
-    return true
+  if (votes === game.users.length - 1) {
+    return true;
+  } else {
+    return false;
   }
-  else{
-    return false
-  }
-}
+};
 
 const ragtimers = [
   "John Arpin",

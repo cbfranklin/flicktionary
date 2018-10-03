@@ -4,28 +4,37 @@ class Lobby extends Component {
   constructor(props) {
     super(props);
   }
-  handleStartGame(){
-      
-  }
 
   render() {
-    const {users, iAmIt, it, handleStartGame} = this.props;
-    console.log({iAmIt})
+    const { users, iAmIt, it, handleStartGame } = this.props;
+    console.log({ iAmIt });
     const StartGame = () => {
-        if(iAmIt){
-            return <button className="btn btn-primary btn-block" onClick={this.props.handleStartGame}>
-                Start the game already!
-              </button>;
+      if (users.length > 2) {
+        if (iAmIt) {
+          return (
+            <button
+              className="btn btn-primary btn-block"
+              onClick={this.props.handleStartGame}
+            >
+              Start the game already!
+            </button>
+          );
+        } else {
+          return (
+            <div className="alert alert-info">
+              Waiting for <em>{it}</em> to start the game
+            </div>
+          );
         }
-        else{
-          return <p className="text-center">Waiting for <strong>{it}</strong> to start the game</p>
-        }
-    }
+      } else {
+        return <div className="alert alert-info">{"Waiting for more users to join"}</div>;
+      }
+    };
     return (
       <div>
         <h2>Lobby</h2>
         <UserList users={users} />
-        <StartGame/>
+        <StartGame />
       </div>
     );
   }

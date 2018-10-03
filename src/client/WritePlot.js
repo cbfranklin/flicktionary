@@ -20,7 +20,7 @@ class WritePlot extends Component {
 
     const PlotForm = () => (
       <div>
-        <h2 className="text-center">{title}</h2>
+        <h2 >{title}</h2>
         <textarea value={plot} onChange={handleChangePlot} />
         <button
           onClick={handleSubmitPlot}
@@ -32,7 +32,7 @@ class WritePlot extends Component {
     );
 
     const Waiting = () => (
-      <p className="text-center">Waiting for opponents to write their plots</p>
+      <p >Waiting for opponents to write their plots</p>
     );
 
     return (

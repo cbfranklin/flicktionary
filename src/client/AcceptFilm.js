@@ -13,15 +13,15 @@ class AcceptFilm extends Component {
       <div>
         <div className="row">
           <div className="col-xs-12">
-            <h4 className="text-center">{this.props.it} proposes the film:</h4>
-            <h2 className="text-center">{title}</h2>
+            <h4 >{this.props.it} proposes the film:</h4>
+            <h2 >{title}</h2>
           </div>
         </div>
         <div className="row">
           <div className="col-md-6">
             <button
               onClick={this.props.handleAcceptFilm}
-              className="btn btn-success form-control"
+              className="btn btn-primary form-control"
               value="accept"
             >
               Never heard of it
@@ -30,7 +30,7 @@ class AcceptFilm extends Component {
           <div className="col-md-6">
             <button
               onClick={this.props.handleAcceptFilm}
-              className="btn btn-danger form-control"
+              className="btn btn-default form-control"
               value="deny"
             >
               I know this film
@@ -41,7 +41,7 @@ class AcceptFilm extends Component {
     );
 
     const Waiting = () => (
-      <p className="text-center">
+      <p >
             Waiting for opponents to accept <strong>{title}</strong>
       </p>
     );

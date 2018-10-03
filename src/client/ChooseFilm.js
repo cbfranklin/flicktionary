@@ -11,7 +11,7 @@ class ChooseFilm extends Component {
     const { it, iAmIt } = this.props;
     const StartButton = () => (
       <div>
-        <h2 className="text-center">Choose a film</h2>
+        <h2 >Choose a film</h2>
         <button
           onClick={this.props.handleChooseFilm}
           className="btn btn-primary form-control"
@@ -22,9 +22,9 @@ class ChooseFilm extends Component {
     );
 
     const Waiting = () => (
-      <p className="text-center">
-        Waiting for <strong>{it}</strong> to choose a film
-      </p>
+      <h2>
+        Waiting for <em>{it}</em> to choose a film
+      </h2>
     );
 
     return (

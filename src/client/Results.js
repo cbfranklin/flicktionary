@@ -8,40 +8,40 @@ class Results extends Component {
   }
 
   render() {
-    const { it, iAmIt, plots, handleVotePlot, plotVoted } = this.props;
+    const { it, iAmIt, plots, handleVotePlot, plotVoted, users } = this.props;
+    const getUserByID = id => {
+      console.log(users)
+      console.log(id)
+      const index = users.findIndex(user => user.id === id);
+      console.log(index)
+      console.log(users[index])
+      return users[index];
+    }
     const Plots = () => {
       return (
         <ul>
           {plots.map((plot, i) => (
             <li key={i}>
-              <button
-                onClick={handleVotePlot}
-                value={i}
-                className="btn btn-success"
-              >
-                Vote
-              </button>{" "}
-              {plot.text}
+              <ul>
+                <li>{plot.votes}</li>
+                <li>{plot.creator}</li>
+                <li>{plot.text}</li>
+                <li>{getUserByID(plot.creator).username}</li>
+              </ul>
             </li>
           ))}
         </ul>
       );
     };
-    const Vote = () => (
-      <div>
-        <h2 className="text-center">Vote for a plot</h2>
-        <Plots />
-      </div>
-    );
 
     const Waiting = () => (
-      <p className="text-center">Waiting for opponents to vote</p>
+      <h2>Waiting for opponents to vote</h2>
     );
 
     return (
       <div className="row">
         <div className="col-xs-12">
-          {iAmIt || plotVoted === true ? <Waiting /> : <Vote />}
+          <Plots />
         </div>
       </div>
     );

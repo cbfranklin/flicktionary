@@ -9,6 +9,7 @@ import UserList from "./UserList";
 import SetUsername from "./SetUsername";
 import Lobby from "./Lobby";
 import VoteForPlot from "./VoteForPlot";
+import Results from "./Results";
 
 const socket = io("localhost:3001");
 
@@ -61,8 +62,8 @@ class GameBoard extends Component {
       (accepted = false), console.log("declined");
     }
     this.setState({
-        filmAccepted: true
-    })
+      filmAccepted: true
+    });
     socket.emit("film-accepted", {
       accept: accepted
     });
@@ -75,9 +76,9 @@ class GameBoard extends Component {
   handleSubmitPlot = e => {
     e.preventDefault();
     this.setState({
-        plotSubmitted: true
+      plotSubmitted: true
     });
-    console.log('plot',this.state.plot)
+    console.log("plot", this.state.plot);
     socket.emit("plot-written", {
       plot: this.state.plot
     });
@@ -85,8 +86,8 @@ class GameBoard extends Component {
   handleVotePlot = e => {
     e.preventDefault();
     this.setState({
-        plotVoted: true
-    })
+      plotVoted: true
+    });
     socket.emit("plot-voted", {
       plot: e.target.value
     });
@@ -151,25 +152,22 @@ class GameBoard extends Component {
               plotVoted={this.state.plotVoted}
             />
           );
+        } else if (stage === "results") {
+          return (
+            <Results
+              it={it}
+              iAmIt={iAmIt}
+              title={game.round.title}
+              plots={game.round.plots}
+              users={game.users}
+            />
+          );
         } else {
           return <div>No component for this stage...</div>;
         }
       };
       return (
         <div>
-          <section>
-            <div className="container">
-              <div className="row">
-                <div className="col-sm-6">
-                  <SetUsername username={username} />
-                </div>
-                <div className="col-sm-6">
-                  <UserList users={game.users} />
-                </div>
-              </div>
-            </div>
-          </section>
-          <hr />
           <section>
             <div className="container">
               <div className="row">
