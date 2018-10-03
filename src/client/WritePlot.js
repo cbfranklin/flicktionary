@@ -20,19 +20,20 @@ class WritePlot extends Component {
 
     const PlotForm = () => (
       <div>
-        <h2 >{title}</h2>
+        <h2>The title of the film is</h2>
+        <h3>{title}</h3>
         <textarea value={plot} onChange={handleChangePlot} />
         <button
           onClick={handleSubmitPlot}
           className="btn btn-primary btn-block"
         >
-          Submit Plot
+          Submit Your Plot
         </button>
       </div>
     );
 
     const Waiting = () => (
-      <p >Waiting for opponents to write their plots</p>
+      <p >Waiting for others to write their plots</p>
     );
 
     return (

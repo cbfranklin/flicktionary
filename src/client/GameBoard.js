@@ -48,8 +48,8 @@ class GameBoard extends Component {
   handleChooseFilm = e => {
     e.preventDefault();
     socket.emit("film-chosen", {
-      title: "THE FILM NAME",
-      plot: "THE REAL PLOT"
+      title: "The Adventures of Ford Fairlane",
+      plot: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris mollis a ante eget iaculis, egestas enim a felis cursus tincidunt. "
     });
   };
   handleAcceptFilm = e => {

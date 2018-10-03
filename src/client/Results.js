@@ -19,14 +19,15 @@ class Results extends Component {
     }
     const Plots = () => {
       return (
-        <ul>
+        <ul className="list-group">
           {plots.map((plot, i) => (
-            <li key={i}>
-              <ul>
-                <li>{plot.votes}</li>
-                <li>{plot.creator}</li>
-                <li>{plot.text}</li>
-                <li>{getUserByID(plot.creator).username}</li>
+            <li className="list-group-item" key={i}>
+
+              <ul class="list-group">
+                <li className="list-group-item">Votes<span class="badge">{plot.votes}</span></li>
+                <li className="list-group-item">Author<span class="badge">{getUserByID(plot.creator).username}</span></li>
+                <br/>
+              <li className="list-group-item">{plot.text}</li>
               </ul>
             </li>
           ))}
@@ -35,7 +36,7 @@ class Results extends Component {
     };
 
     const Waiting = () => (
-      <h2>Waiting for opponents to vote</h2>
+      <h2>Waiting for others to vote</h2>
     );
 
     return (

@@ -13,8 +13,8 @@ class AcceptFilm extends Component {
       <div>
         <div className="row">
           <div className="col-xs-12">
-            <h4 >{this.props.it} proposes the film:</h4>
-            <h2 >{title}</h2>
+            <h2>{this.props.it} proposes the film</h2>
+            <h3>{title}</h3>
           </div>
         </div>
         <div className="row">
@@ -41,14 +41,17 @@ class AcceptFilm extends Component {
     );
 
     const Waiting = () => (
-      <p >
-            Waiting for opponents to accept <strong>{title}</strong>
-      </p>
+      <div>
+        <h2>Waiting for others to accept the film</h2>
+        <h3>{title}</h3>
+      </div>
     );
 
     return (
       <div className="row">
-        <div className="col-xs-12">{iAmIt || filmAccepted ? <Waiting /> : <StartButton />}</div>
+        <div className="col-xs-12">
+          {iAmIt || filmAccepted ? <Waiting /> : <StartButton />}
+        </div>
       </div>
     );
   }

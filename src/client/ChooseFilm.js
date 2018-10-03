@@ -16,7 +16,7 @@ class ChooseFilm extends Component {
           onClick={this.props.handleChooseFilm}
           className="btn btn-primary form-control"
         >
-          Choose the demo film
+          The Adventures of Ford Fairlane
         </button>
       </div>
     );
