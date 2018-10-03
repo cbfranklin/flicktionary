@@ -1,12 +1,21 @@
 import React, { Component } from "react";
+import PlotEditor from "./PlotEditor";
 
 class WritePlot extends Component {
   constructor(props) {
     super(props);
 
-    this.state = {};
+    this.state = {
+      plot: ""
+    };
+    this.handleChange = this.handleChange.bind(this);
   }
-
+  handleChange(e) {
+    console.log("handle change");
+    this.setState({
+      [e.target.name]: e.target.value
+    });
+  }
   render() {
     const {
       iAmIt,
@@ -18,28 +27,22 @@ class WritePlot extends Component {
       plot
     } = this.props;
 
-    const PlotForm = () => (
-      <div>
-        <h2>The title of the film is</h2>
-        <h3>{title}</h3>
-        <textarea value={plot} onChange={handleChangePlot} />
-        <button
-          onClick={handleSubmitPlot}
-          className="btn btn-primary btn-block"
-        >
-          Submit Your Plot
-        </button>
-      </div>
-    );
-
-    const Waiting = () => (
-      <p >Waiting for others to write their plots</p>
-    );
+    const Waiting = () => <p>Waiting for others to write their plots</p>;
 
     return (
       <div className="row">
         <div className="col-xs-12">
-          {iAmIt || plotSubmitted ? <Waiting /> : <PlotForm />}
+          <h2>The title of the film is</h2>
+          <h3>{title}</h3>
+          {iAmIt || plotSubmitted === title ? (
+            <Waiting />
+          ) : (
+            <PlotEditor
+              plot={plot}
+              handleChangePlot={handleChangePlot}
+              handleSubmitPlot={handleSubmitPlot}
+            />
+          )}
         </div>
       </div>
     );

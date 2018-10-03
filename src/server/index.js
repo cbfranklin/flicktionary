@@ -10,8 +10,7 @@ const game = {
     title: null,
     accepts: [],
     plots: []
-  },
-  queuedUsers: []
+  }
 };
 
 // React static site served at :3000
@@ -26,9 +25,9 @@ io.on("connection", function(socket) {
   console.log("new connection");
   // add user to db
   game.users.push({
-    username: ragtimers.shift(),
-    // username: "USER",
-    id: socket.id
+    username: ragtimers[Math.floor(Math.random() * ragtimers.length)],
+    id: socket.id,
+    points: 0
   });
   // set it
   setInitialUserWhoIsIt();
@@ -43,7 +42,7 @@ io.on("connection", function(socket) {
     updateGameForAllUsers(socket);
 
     if (game.users.length === 0) {
-      newRound();
+      newRound(socket);
     }
   });
 
@@ -108,6 +107,7 @@ io.on("connection", function(socket) {
     };
 
     game.round.plots.push(plot);
+    shuffleArray(game.round.plots);
     if (game.round.plots.length === game.users.length) {
       game.round.stage = "vote-for-plot";
     }
@@ -126,13 +126,15 @@ io.on("connection", function(socket) {
   });
 
   socket.on("new-round", function(data) {
-    newRound();
+    newRound(socket);
   });
 });
 
-const newRound = () => {
-  game.round = templates.round;
+const shuffleArray = arr => arr.sort(() => Math.random() - 0.5);
 
+const newRound = socket => {
+  game.round = templates.round;
+  updateGameForAllUsers(socket);
 };
 
 const updateGameForAllUsers = socket => {
@@ -146,8 +148,10 @@ const assignPlotVotesToUsers = () => {
     if (plot.isReal && plot.votes === 0) {
       userData(plot.creator).points += game.users.length - 1;
     }
-    // if it was a fake plot, apply all votes to creator as points
-    if (!plot.isReal) {
+  }
+  // if it was a fake plot, apply all votes to creator as points
+  if (!plot.isReal) {
+    if (plot.isReal && plot.votes === 0) {
       userData(plot.creator).points += plot.votes;
     }
   }
@@ -163,7 +167,6 @@ const userData = socketID => {
 };
 
 const voteForPlot = index => {
-  console.log(`Vote for ${game.round.plots[index].creator}`);
   game.round.plots[index].votes++;
 };
 
@@ -178,10 +181,9 @@ const setInitialUserWhoIsIt = () => {
       user.it = false;
     });
     let nextUser = game.users[currentItIndex + 1];
-    if(nextUser){
-      game.users[nextUser].it = true;
-    }
-    else{
+    if (nextUser) {
+      nextUser.it = true;
+    } else {
       game.users[0].it = true;
     }
   }

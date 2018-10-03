@@ -14,13 +14,13 @@ textarea{
   align-items: center;
   justify-content: center;
 }
-*:focus{
+/* buton:focus{
   filter:invert(1);
   box-shadow:none!important;
   outline:1px solid black!important;
 }
 button{
   box-shadow:none!important;
-}
+} */
 /* enable crazy-go-nuts animation */
 /* body { visibility: hidden } */

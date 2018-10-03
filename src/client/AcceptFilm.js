@@ -5,10 +5,9 @@ class AcceptFilm extends Component {
     super(props);
 
     this.state = {};
-  }
-
+    }
   render() {
-    const { it, iAmIt, title, filmAccepted } = this.props;
+    const { it, iAmIt, title} = this.props;
     const StartButton = () => (
       <div>
         <div className="row">
@@ -50,7 +49,7 @@ class AcceptFilm extends Component {
     return (
       <div className="row">
         <div className="col-xs-12">
-          {iAmIt || filmAccepted ? <Waiting /> : <StartButton />}
+          {iAmIt || this.props.filmAccepted === title ? <Waiting /> : <StartButton />}
         </div>
       </div>
     );

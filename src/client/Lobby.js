@@ -6,7 +6,7 @@ class Lobby extends Component {
   }
 
   render() {
-    const { users, iAmIt, it, handleStartGame } = this.props;
+    const { users, iAmIt, it, handleStartGame, myUserIndex } = this.props;
     console.log({ iAmIt });
     const StartGame = () => {
       if (users.length > 2) {
@@ -14,7 +14,7 @@ class Lobby extends Component {
           return (
             <button
               className="btn btn-primary btn-lg btn-block"
-              onClick={this.props.handleStartGame}
+              onClick={handleStartGame}
             >
               Start
             </button>
@@ -22,20 +22,36 @@ class Lobby extends Component {
         } else {
           return (
             <div className="alert alert-info">
-              Waiting for <em>{it}</em> to start the game
+              Waiting for <em>{it}</em> to start the round
             </div>
           );
         }
       } else {
-        return <div className="alert alert-info">{"Waiting for more users to join"}</div>;
+        return (
+          <div className="alert alert-info">
+            {"Waiting for more users to join"}
+          </div>
+        );
       }
     };
     return (
-      <div>
-        <h2>Lobby</h2>
-        <UserList users={users} />
-        <StartGame />
-      </div>
+      <section>
+        <div className="container">
+          <div className="row">
+            <div className="col-sm-6">
+              <h2>Greetings, {users[myUserIndex].username}!</h2>
+              <p>
+                Flicktionary is like Dictionary (Balderdash), except with film
+                plots instead of word definitions!
+              </p>
+              <StartGame />
+            </div>
+            <div className="col-sm-6">
+              <UserList users={users} />
+            </div>
+          </div>
+        </div>
+      </section>
     );
   }
 }

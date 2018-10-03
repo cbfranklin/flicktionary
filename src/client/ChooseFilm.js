@@ -12,24 +12,35 @@ class ChooseFilm extends Component {
     const films = [
       {
         title: "The Adventures of Ford Fairlane",
-        plot: "Lorem"
+        plot:
+          "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris mollis a ante eget iaculis, egestas enim a felis cursus tincidunt."
       }
     ];
     const renderedFilms = films.map((film, i) => {
-      return <li key={i} className="list-group-item">
-          <button onClick={this.props.handleChooseFilm} value={i} className="btn btn-default form-control">
-            {film.title}
-          </button>
+      return (
+        <li key={i} className="list-group-item">
+          <h3>{film.title}</h3>
           <p>{film.plot}</p>
-        </li>;
+          <button
+            onClick={this.props.handleChooseFilm}
+            value={i}
+            className="btn btn-primary form-control"
+          >
+            Choose
+            {" ["}
+            {film.title}
+            {"]"}
+          </button>
+        </li>
+      );
     });
     const FilmList = () => {
-      return <div>
-        <h2>Choose a film</h2>
-        <ul className="list-group">
-          {renderedFilms}
-        </ul>
-      </div>
+      return (
+        <div>
+          <h2>Choose a film</h2>
+          <ul className="list-group">{renderedFilms}</ul>
+        </div>
+      );
     };
 
     const Waiting = () => (
