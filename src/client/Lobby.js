@@ -4,29 +4,54 @@ class Lobby extends Component {
   constructor(props) {
     super(props);
   }
-  handleStartGame(){
-      
-  }
 
   render() {
-    const {users, iAmIt, it, handleStartGame} = this.props;
-    console.log({iAmIt})
+    const { users, iAmIt, it, handleStartGame, myUserIndex } = this.props;
+    console.log({ iAmIt });
     const StartGame = () => {
-        if(iAmIt){
-            return <button className="btn btn-primary btn-block" onClick={this.props.handleStartGame}>
-                Start the game already!
-              </button>;
+      if (users.length > 2) {
+        if (iAmIt) {
+          return (
+            <button
+              className="btn btn-primary btn-lg btn-block"
+              onClick={handleStartGame}
+            >
+              Start
+            </button>
+          );
+        } else {
+          return (
+            <div className="alert alert-info">
+              Waiting for <em>{it}</em> to start the round
+            </div>
+          );
         }
-        else{
-          return <p className="text-center">Waiting for <strong>{it}</strong> to start the game</p>
-        }
-    }
+      } else {
+        return (
+          <div className="alert alert-info">
+            {"Waiting for more users to join"}
+          </div>
+        );
+      }
+    };
     return (
-      <div>
-        <h2>Lobby</h2>
-        <UserList users={users} />
-        <StartGame/>
-      </div>
+      <section>
+        <div className="container">
+          <div className="row">
+            <div className="col-sm-6">
+              <h2>Greetings, {users[myUserIndex].username}!</h2>
+              <p>
+                Flicktionary is like Dictionary (Balderdash), except with film
+                plots instead of word definitions!
+              </p>
+              <StartGame />
+            </div>
+            <div className="col-sm-6">
+              <UserList users={users} />
+            </div>
+          </div>
+        </div>
+      </section>
     );
   }
 }

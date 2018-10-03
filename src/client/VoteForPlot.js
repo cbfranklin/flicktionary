@@ -10,20 +10,22 @@ class VoteForPlot extends Component {
   }
 
   render() {
-    const { it, iAmIt, plots, handleVotePlot, plotVoted } = this.props;
+    const { it, iAmIt, plots, handleVotePlot, plotVoted, title } = this.props;
     const Plots = () => {
       return (
-        <ul>
+        <ul className="list-group">
           {plots.map((plot, i) => (
-            <li key={i}>
+            <li className="list-group-item" key={i}>
+              <h3>{i}</h3>
+              <p>{plot.text}</p>
               <button
                 onClick={handleVotePlot}
                 value={i}
-                className="btn btn-success"
+                className="btn btn-primary btn-block"
               >
-                Vote
-              </button>{" "}
-              {plot.text}
+                Vote{' '}[{i}]
+              </button>
+              <br/>
             </li>
           ))}
         </ul>
@@ -31,13 +33,14 @@ class VoteForPlot extends Component {
     };
     const Vote = () => (
       <div>
-        <h2 className="text-center">Vote for a plot</h2>
+        <h2>The title of the film is</h2>
+        <h3>{title}</h3>
         <Plots />
       </div>
     );
 
     const Waiting = () => (
-      <p className="text-center">Waiting for opponents to vote</p>
+      <h2>Waiting for others to vote</h2>
     );
 
     return (

@@ -5,10 +5,11 @@ import io from "socket.io-client";
 import ChooseFilm from "./ChooseFilm";
 import AcceptFilm from "./AcceptFilm";
 import WritePlot from "./WritePlot";
-import UserList from "./UserList";
-import SetUsername from "./SetUsername";
+// import UserList from "./UserList";
+// import SetUsername from "./SetUsername";
 import Lobby from "./Lobby";
 import VoteForPlot from "./VoteForPlot";
+import Results from "./Results";
 
 const socket = io("localhost:3001");
 
@@ -18,8 +19,11 @@ class GameBoard extends Component {
 
     this.state = {
       game: null,
-      myUserIndex: null
+      myUserIndex: null,
+      plot: ""
     };
+
+    this.handleChangePlot = this.handleChangePlot.bind(this);
 
     socket.on("game-update", function(data) {
       updateGame(data.game, socket.id);
@@ -47,8 +51,9 @@ class GameBoard extends Component {
   handleChooseFilm = e => {
     e.preventDefault();
     socket.emit("film-chosen", {
-      title: "THE FILM NAME",
-      plot: "THE REAL PLOT"
+      title: "The Adventures of Ford Fairlane",
+      plot:
+        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris mollis a ante eget iaculis, egestas enim a felis cursus tincidunt."
     });
   };
   handleAcceptFilm = e => {
@@ -61,36 +66,48 @@ class GameBoard extends Component {
       (accepted = false), console.log("declined");
     }
     this.setState({
-        filmAccepted: true
-    })
+      filmAccepted: this.state.game.round.title
+    });
     socket.emit("film-accepted", {
       accept: accepted
     });
   };
   handleChangePlot = e => {
-    this.setState({
-      plot: e.target.value
-    });
+    console.log("handleChangePlot", e.target.value);
+    this.setState(
+      {
+        plot: e.target.value
+      },
+      () => console.log(this.state.plot)
+    );
   };
   handleSubmitPlot = e => {
     e.preventDefault();
     this.setState({
-        plotSubmitted: true
+      plotSubmitted: this.state.game.round.title
     });
-    console.log('plot',this.state.plot)
-    socket.emit("plot-written", {
-      plot: this.state.plot
-    });
+    const formData = new FormData(e.target);
+    for (var [key, value] of formData.entries()) {
+      if (key === "plot") {
+        console.log("plot", value);
+        socket.emit("plot-written", {
+          plot: value
+        });
+      }
+    }
   };
   handleVotePlot = e => {
     e.preventDefault();
     this.setState({
-        plotVoted: true
-    })
+      plotVoted: true
+    });
     socket.emit("plot-voted", {
       plot: e.target.value
     });
-  };
+  }
+  handleNewRound = () => {
+    socket.emit("new-round");
+  }
   render() {
     const game = this.state.game;
     // make sure socket is connected and game obj exists before rendering
@@ -108,6 +125,7 @@ class GameBoard extends Component {
               iAmIt={iAmIt}
               it={it}
               handleStartGame={this.handleStartGame}
+              myUserIndex={this.state.myUserIndex}
             />
           );
         } else if (stage === "choose-film") {
@@ -138,6 +156,7 @@ class GameBoard extends Component {
               handleChangePlot={this.handleChangePlot}
               plotSubmitted={this.state.plotSubmitted}
               plot={this.state.plot}
+              title={game.round.title}
             />
           );
         } else if (stage === "vote-for-plot") {
@@ -151,25 +170,33 @@ class GameBoard extends Component {
               plotVoted={this.state.plotVoted}
             />
           );
+        } else if (stage === "results") {
+          return (
+            <Results
+              it={it}
+              iAmIt={iAmIt}
+              title={game.round.title}
+              plots={game.round.plots}
+              users={game.users}
+              handleNewRound={this.handleNewRound}
+            />
+          );
         } else {
-          return <div>No component for this stage...</div>;
+          return (
+            <section>
+              <div className="container">
+                <div className="row">
+                  <div className="col-xs-12">
+                    <p>No component for this stage...</p>
+                  </div>
+                </div>
+              </div>
+            </section>
+          );
         }
       };
       return (
         <div>
-          <section>
-            <div className="container">
-              <div className="row">
-                <div className="col-sm-6">
-                  <SetUsername username={username} />
-                </div>
-                <div className="col-sm-6">
-                  <UserList users={game.users} />
-                </div>
-              </div>
-            </div>
-          </section>
-          <hr />
           <section>
             <div className="container">
               <div className="row">
@@ -182,7 +209,17 @@ class GameBoard extends Component {
         </div>
       );
     } else {
-      return <div>Waiting for game...</div>;
+      return (
+        <section>
+          <div className="container">
+            <div className="row">
+              <div className="col-xs-12">
+                <p>Waiting for connection...</p>
+              </div>
+            </div>
+          </div>
+        </section>
+      );
     }
   }
 }

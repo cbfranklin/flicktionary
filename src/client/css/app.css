@@ -1,0 +1,26 @@
+.user-is-it{
+  font-weight:bold;
+}
+.user-is-it:after{
+  content: ' (it)'
+}
+textarea{
+  width:100%;
+  min-height:100px;
+}
+
+.flex-center{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+/* buton:focus{
+  filter:invert(1);
+  box-shadow:none!important;
+  outline:1px solid black!important;
+}
+button{
+  box-shadow:none!important;
+} */
+/* enable crazy-go-nuts animation */
+/* body { visibility: hidden } */

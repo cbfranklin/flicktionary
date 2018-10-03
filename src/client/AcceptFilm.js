@@ -5,23 +5,22 @@ class AcceptFilm extends Component {
     super(props);
 
     this.state = {};
-  }
-
+    }
   render() {
-    const { it, iAmIt, title, filmAccepted } = this.props;
+    const { it, iAmIt, title} = this.props;
     const StartButton = () => (
       <div>
         <div className="row">
           <div className="col-xs-12">
-            <h4 className="text-center">{this.props.it} proposes the film:</h4>
-            <h2 className="text-center">{title}</h2>
+            <h2>{this.props.it} proposes the film</h2>
+            <h3>{title}</h3>
           </div>
         </div>
         <div className="row">
           <div className="col-md-6">
             <button
               onClick={this.props.handleAcceptFilm}
-              className="btn btn-success form-control"
+              className="btn btn-primary form-control"
               value="accept"
             >
               Never heard of it
@@ -30,7 +29,7 @@ class AcceptFilm extends Component {
           <div className="col-md-6">
             <button
               onClick={this.props.handleAcceptFilm}
-              className="btn btn-danger form-control"
+              className="btn btn-default form-control"
               value="deny"
             >
               I know this film
@@ -41,14 +40,17 @@ class AcceptFilm extends Component {
     );
 
     const Waiting = () => (
-      <p className="text-center">
-            Waiting for opponents to accept <strong>{title}</strong>
-      </p>
+      <div>
+        <h2>Waiting for others to accept the film</h2>
+        <h3>{title}</h3>
+      </div>
     );
 
     return (
       <div className="row">
-        <div className="col-xs-12">{iAmIt || filmAccepted ? <Waiting /> : <StartButton />}</div>
+        <div className="col-xs-12">
+          {iAmIt || this.props.filmAccepted === title ? <Waiting /> : <StartButton />}
+        </div>
       </div>
     );
   }
