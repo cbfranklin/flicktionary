@@ -13,10 +13,10 @@ class Lobby extends Component {
         if (iAmIt) {
           return (
             <button
-              className="btn btn-primary btn-block"
+              className="btn btn-primary btn-lg btn-block"
               onClick={this.props.handleStartGame}
             >
-              Start the game already!
+              Start
             </button>
           );
         } else {

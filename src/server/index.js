@@ -132,6 +132,7 @@ io.on("connection", function(socket) {
 
 const newRound = () => {
   game.round = templates.round;
+
 };
 
 const updateGameForAllUsers = socket => {
@@ -172,11 +173,17 @@ const isTrue = item => {
 
 const setInitialUserWhoIsIt = () => {
   if (game.users.length > 0) {
-    // first user to join is "it"
-    for (user of game.users) {
+    const currentItIndex = game.users.findIndex(user => user.it === true);
+    game.users.forEach(user => {
       user.it = false;
+    });
+    let nextUser = game.users[currentItIndex + 1];
+    if(nextUser){
+      game.users[nextUser].it = true;
     }
-    game.users[0].it = true;
+    else{
+      game.users[0].it = true;
+    }
   }
 };
 

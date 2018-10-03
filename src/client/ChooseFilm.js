@@ -9,17 +9,28 @@ class ChooseFilm extends Component {
 
   render() {
     const { it, iAmIt } = this.props;
-    const StartButton = () => (
-      <div>
-        <h2 >Choose a film</h2>
-        <button
-          onClick={this.props.handleChooseFilm}
-          className="btn btn-primary form-control"
-        >
-          The Adventures of Ford Fairlane
-        </button>
+    const films = [
+      {
+        title: "The Adventures of Ford Fairlane",
+        plot: "Lorem"
+      }
+    ];
+    const renderedFilms = films.map((film, i) => {
+      return <li key={i} className="list-group-item">
+          <button onClick={this.props.handleChooseFilm} value={i} className="btn btn-default form-control">
+            {film.title}
+          </button>
+          <p>{film.plot}</p>
+        </li>;
+    });
+    const FilmList = () => {
+      return <div>
+        <h2>Choose a film</h2>
+        <ul className="list-group">
+          {renderedFilms}
+        </ul>
       </div>
-    );
+    };
 
     const Waiting = () => (
       <h2>
@@ -29,7 +40,7 @@ class ChooseFilm extends Component {
 
     return (
       <div className="row">
-        <div className="col-xs-12">{iAmIt ? <StartButton /> : <Waiting />}</div>
+        <div className="col-xs-12">{iAmIt ? <FilmList /> : <Waiting />}</div>
       </div>
     );
   }
