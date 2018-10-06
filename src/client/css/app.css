@@ -22,5 +22,9 @@ textarea{
 button{
   box-shadow:none!important;
 } */
+
+button{
+  margin-bottom:1em;
+}
 /* enable crazy-go-nuts animation */
 /* body { visibility: hidden } */

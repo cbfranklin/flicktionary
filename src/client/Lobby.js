@@ -46,9 +46,6 @@ class Lobby extends Component {
               </p>
               <StartGame />
             </div>
-            <div className="col-sm-6">
-              <UserList users={users} />
-            </div>
           </div>
         </div>
       </section>

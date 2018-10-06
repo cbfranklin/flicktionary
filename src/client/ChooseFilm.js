@@ -11,7 +11,7 @@ class ChooseFilm extends Component {
     const { it, iAmIt } = this.props;
     const films = [
       {
-        title: "The Adventures of Ford Fairlane",
+        title: "Jungle 2 Jungle",
         plot:
           "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris mollis a ante eget iaculis, egestas enim a felis cursus tincidunt."
       }

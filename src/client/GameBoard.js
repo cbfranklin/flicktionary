@@ -5,7 +5,7 @@ import io from "socket.io-client";
 import ChooseFilm from "./ChooseFilm";
 import AcceptFilm from "./AcceptFilm";
 import WritePlot from "./WritePlot";
-// import UserList from "./UserList";
+import UserList from "./UserList";
 // import SetUsername from "./SetUsername";
 import Lobby from "./Lobby";
 import VoteForPlot from "./VoteForPlot";
@@ -186,7 +186,7 @@ class GameBoard extends Component {
             <section>
               <div className="container">
                 <div className="row">
-                  <div className="col-xs-12">
+                  <div className="col-sm-9">
                     <p>No component for this stage...</p>
                   </div>
                 </div>
@@ -200,8 +200,11 @@ class GameBoard extends Component {
           <section>
             <div className="container">
               <div className="row">
-                <div className="col-xs-12">
+                <div className="col-sm-9">
                   <Stage stage={game.round.stage} />
+                </div>
+                <div className="col-sm-3">
+                  <UserList users={game.users} />
                 </div>
               </div>
             </div>

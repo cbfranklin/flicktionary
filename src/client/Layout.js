@@ -11,18 +11,9 @@ class Layout extends Component {
         <div className="navbar navbar-inverse">
           <div className="navbar-inner">
             <div className="container">
-              <a
-                className="btn btn-navbar"
-                data-toggle="collapse"
-                data-target=".nav-collapse"
-              >
-                <span className="icon-bar" />
-                <span className="icon-bar" />
-                <span className="icon-bar" />
-              </a>
-              <a className="brand" href="#">
+              <p className="brand" href="#">
                 Flicktionary
-              </a>
+              </p>
             </div>
           </div>
         </div>
