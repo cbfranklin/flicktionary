@@ -20,13 +20,18 @@ class GameBoard extends Component {
     this.state = {
       game: null,
       myUserIndex: null,
-      plot: ""
+      plot: "",
+      plotVoted: false
     };
 
     this.handleChangePlot = this.handleChangePlot.bind(this);
 
     socket.on("game-update", function(data) {
       updateGame(data.game, socket.id);
+    });
+
+    socket.on("random-films", function(data) {
+      updateRandomFilms(data.randomFilms);
     });
 
     const updateGame = (game, socketID) => {
@@ -41,6 +46,14 @@ class GameBoard extends Component {
         () => console.log(`Game updated`, this.state)
       );
     };
+    const updateRandomFilms = randomFilms => {
+      this.setState(
+        {
+          randomFilms: randomFilms
+        },
+        () => console.log(`Set random films`, this.state.randomFilms)
+      );
+    };
   }
 
   handleStartGame() {
@@ -48,16 +61,17 @@ class GameBoard extends Component {
       stage: "choose-film"
     });
   }
-  handleChooseFilm = e => {
-    e.preventDefault();
-    socket.emit("film-chosen", {
-      title: "The Adventures of Ford Fairlane",
-      plot:
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris mollis a ante eget iaculis, egestas enim a felis cursus tincidunt."
-    });
+  handleRandomFilmRequest = () => {
+    socket.emit("random-films-requested");
+  };
+  handleChooseFilm = i => {
+    // e.preventDefault();
+    const film = this.state.randomFilms[i];
+    socket.emit("film-chosen", film);
   };
   handleAcceptFilm = e => {
     e.preventDefault();
+
     let accepted;
     if (e.target.value === "accept") {
       accepted = true;
@@ -66,7 +80,8 @@ class GameBoard extends Component {
       (accepted = false), console.log("declined");
     }
     this.setState({
-      filmAccepted: this.state.game.round.title
+      filmAccepted: this.state.game.round.title,
+      plotVoted: false,
     });
     socket.emit("film-accepted", {
       accept: accepted
@@ -104,10 +119,11 @@ class GameBoard extends Component {
     socket.emit("plot-voted", {
       plot: e.target.value
     });
-  }
+  };
   handleNewRound = () => {
+    console.log('new round')
     socket.emit("new-round");
-  }
+  };
   render() {
     const game = this.state.game;
     // make sure socket is connected and game obj exists before rendering
@@ -126,6 +142,7 @@ class GameBoard extends Component {
               it={it}
               handleStartGame={this.handleStartGame}
               myUserIndex={this.state.myUserIndex}
+              voteReset={this.voteReset}
             />
           );
         } else if (stage === "choose-film") {
@@ -134,6 +151,8 @@ class GameBoard extends Component {
               it={it}
               iAmIt={iAmIt}
               handleChooseFilm={this.handleChooseFilm}
+              handleRandomFilmRequest={this.handleRandomFilmRequest}
+              randomFilms={this.state.randomFilms}
             />
           );
         } else if (stage === "accept-film") {

@@ -23,7 +23,7 @@ readliner.on('line', (line) => {
         return false;
     }
     else{
-      obj.plot = obj.plotlines.join('');
+      obj.plot = obj.plotlines.join(' ').replace(/  /g,' ');
       console.log('plot: ',obj.plot);
       delete obj.plotlines;
       plots.push(obj);
@@ -33,7 +33,10 @@ readliner.on('line', (line) => {
       console.log('line: ',line);
       obj.title = line.replace(/ \(\d\d\d\d\)/g,'').replace(/MV: |"/g,'');
       if(line.match(/\(\d\d\d\d\)/)){
-        obj.year = line.match(/\(\d\d\d\d\)/)[0].replace(/\(|\)/g,'')
+        obj.year = line.match(/\(\d\d\d\d\)/)[0].replace(/\(|\)/g,'');
+        if(parseFloat(obj.year) > 1999){
+          return false
+        }
       }
       console.log('title',obj.title);
       console.log('year',obj.year);
@@ -41,8 +44,16 @@ readliner.on('line', (line) => {
   }
   // plotline
   else if(line.includes('PL:')){
-    obj.plotlines.push(line.replace(/PL: /,''))
-    // console.log(obj.plotlines);
+    if(obj.plotlines > 10){
+      delete obj.title
+      return false;
+    }
+    if(obj.title){
+      obj.plotlines.push(line.replace(/PL: /,''))
+    }
+    else{
+      return false;
+    }
   }
 });
 

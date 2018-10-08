@@ -1,13 +1,13 @@
 import React, { Component } from "react";
 import UserList from "./UserList";
+
 class Lobby extends Component {
   constructor(props) {
     super(props);
   }
 
   render() {
-    const { users, iAmIt, it, handleStartGame, myUserIndex } = this.props;
-    console.log({ iAmIt });
+    const { users, iAmIt, it, handleStartGame, myUserIndex} = this.props;
     const StartGame = () => {
       if (users.length > 2) {
         if (iAmIt) {

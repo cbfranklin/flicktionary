@@ -21,6 +21,8 @@ class PlotEditor extends Component {
           value={this.state.plot}
           onChange={this.handleChange}
         />
+      <br/>
+      <br/>
         <input className="btn btn-primary btn-lg btn-block" type="submit" value="Submit" />
       </form>
     );
