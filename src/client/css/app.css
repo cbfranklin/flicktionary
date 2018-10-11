@@ -29,3 +29,7 @@ button{
 }
 /* enable crazy-go-nuts animation */
 /* body { visibility: hidden } */
+
+.btn.form-control{
+  height:auto;
+}

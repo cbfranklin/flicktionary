@@ -8,7 +8,10 @@ const path = require("path");
 const filmsPath = path.join(__dirname, "plots.json");
 const films = JSON.parse(fs.readFileSync(filmsPath, "utf8"));
 
+console.log(films);
+
 const randomFilm = () => {
+  console.log(films[Math.floor(Math.random() * films.length)]);
   return films[Math.floor(Math.random() * films.length)];
 };
 
@@ -37,7 +40,7 @@ io.on("connection", function(socket) {
   console.log("new connection");
   // add user to db
   game.users.push({
-    username: ragtimers[Math.floor(Math.random() * ragtimers.length)],
+    username: "Friend",
     id: socket.id,
     points: 0
   });
@@ -52,6 +55,18 @@ io.on("connection", function(socket) {
     if (game.users[disconnectIndex].it === true || game.users.length === 0) {
       newRound(socket);
     }
+    // if current stage is accept-film
+    if (game.round.stage === "accept-film") {
+      // if all remaining users have accepted
+      if (
+        game.round.accepts.length === game.users.length - 1 &&
+        game.round.accepts.every(isTrue)
+      ) {
+        game.round.filmAccepted = true;
+        game.round.stage = "write-plot";
+      }
+    }
+
     // remove user from db
     game.users.splice(disconnectIndex, 1);
     // update user list for all clients
@@ -244,7 +259,9 @@ const setUserWhoIsIt = socket => {
       }
       // if there is already an it
     } else {
-      game.users.forEach((user)=>{user.it = false})
+      game.users.forEach(user => {
+        user.it = false;
+      });
       let nextUser = game.users[currentItIndex + 1];
       if (nextUser) {
         nextUser.it = true;
@@ -254,7 +271,7 @@ const setUserWhoIsIt = socket => {
     }
   }
   // if there are no players
-  else{
+  else {
     return false;
   }
 
@@ -293,47 +310,3 @@ const templates = {
     plots: []
   }
 };
-
-const ragtimers = [
-  "John Arpin",
-  "Winifred Atwell",
-  "Irving Berlin",
-  "Mike Bernard",
-  "Eubie Blake",
-  "William Bolcom",
-  "Lou Busch",
-  "Jo Ann Castle",
-  "Louis Chauvin",
-  "Zez Confrey",
-  "James Reese Europe",
-  "William Ezell",
-  "Blind Leroy Garnett",
-  "Gene Greene",
-  "Ben Harney",
-  "Ernest Hogan",
-  "Dick Hyman",
-  "Tony Jackson",
-  "James P. Johnson",
-  "Scott Joplin",
-  "Sue Keller",
-  "Joseph Lamb",
-  "George Lewis",
-  "Johnny Maddox",
-  "Bob Milne",
-  "John Mooney",
-  "Jelly Roll Morton",
-  "Vess Ossman",
-  "Harry Reser",
-  "David Thomas Roberts",
-  "Wally Rose",
-  "Joshua Rifkin",
-  "James Scott",
-  "Muggsy Spanier",
-  "Charley Straight",
-  "Wilbur Sweatman",
-  "Fred Van Eps",
-  "Fats Waller",
-  "Del Wood",
-  "Dick Zimmerman",
-  "Jelly Roll Morton"
-];

@@ -18,7 +18,7 @@ class VoteForPlot extends Component {
         <ul className="list-group">
           {plots.map((plot, i) => (
             <li className="list-group-item" key={i}>
-              <h3>{i}</h3>
+              {/*<h3>{i}</h3>*/}
               <p>{plot.text}</p>
               {!iAmIt && (
                 <button
@@ -27,7 +27,8 @@ class VoteForPlot extends Component {
                   value={i}
                   className="btn btn-primary btn-block"
                 >
-                  Vote [{i}]
+                Vote
+                  {/* Vote [{i}] */}
                 </button>
               )}
               <br />

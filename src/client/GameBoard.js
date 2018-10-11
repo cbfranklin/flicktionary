@@ -1,15 +1,19 @@
 import React, { Component } from "react";
 
 import io from "socket.io-client";
+import Cookies from 'universal-cookie';
 
 import ChooseFilm from "./ChooseFilm";
 import AcceptFilm from "./AcceptFilm";
 import WritePlot from "./WritePlot";
 import UserList from "./UserList";
-// import SetUsername from "./SetUsername";
+import NameEditor from "./NameEditor";
 import Lobby from "./Lobby";
 import VoteForPlot from "./VoteForPlot";
 import Results from "./Results";
+import ErrorBoundary from "./ErrorBoundary";
+
+const cookies = new Cookies();
 
 const socket = io("localhost:3001");
 
@@ -25,6 +29,12 @@ class GameBoard extends Component {
     };
 
     this.handleChangePlot = this.handleChangePlot.bind(this);
+
+    if (cookies.get("username")) {
+      socket.emit("username-set", {
+        username: cookies.get("username")
+      });
+    }
 
     socket.on("game-update", function(data) {
       updateGame(data.game, socket.id);
@@ -61,6 +71,20 @@ class GameBoard extends Component {
       stage: "choose-film"
     });
   }
+
+  handleSubmitName = e => {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    for (var [key, value] of formData.entries()) {
+      if (key === "username") {
+        console.log("username", value);
+        socket.emit("username-set", {
+          username: value
+        });
+        cookies.set("username", value, { path: "/" });
+      }
+    }
+  };
   handleRandomFilmRequest = () => {
     socket.emit("random-films-requested");
   };
@@ -81,7 +105,7 @@ class GameBoard extends Component {
     }
     this.setState({
       filmAccepted: this.state.game.round.title,
-      plotVoted: false,
+      plotVoted: false
     });
     socket.emit("film-accepted", {
       accept: accepted
@@ -121,13 +145,13 @@ class GameBoard extends Component {
     });
   };
   handleNewRound = () => {
-    console.log('new round')
+    console.log("new round");
     socket.emit("new-round");
   };
   render() {
     const game = this.state.game;
     // make sure socket is connected and game obj exists before rendering
-    if (game) {
+    if (game && this.state.itsUserIndex) {
       const username = game.users[this.state.myUserIndex].username;
       const it = game.users[this.state.itsUserIndex].username;
       const iAmIt = game.users[this.state.myUserIndex].it;
@@ -219,11 +243,31 @@ class GameBoard extends Component {
           <section>
             <div className="container">
               <div className="row">
-                <div className="col-sm-9">
-                  <Stage stage={game.round.stage} />
-                </div>
                 <div className="col-sm-3">
                   <UserList users={game.users} />
+                </div>
+              </div>
+            </div>
+          </section>
+          <section>
+            <div className="container">
+              <div className="row">
+                <div className="col-xs-12">
+                  <ErrorBoundary>
+                    <Stage stage={game.round.stage} />
+                  </ErrorBoundary>
+                </div>
+              </div>
+            </div>
+          </section>
+          <section>
+            <div className="container">
+              <div className="row">
+                <div className="col-xs-12">
+                  <NameEditor
+                    handleSubmitName={this.handleSubmitName}
+                    username={username}
+                  />
                 </div>
               </div>
             </div>

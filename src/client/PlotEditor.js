@@ -16,6 +16,8 @@ class PlotEditor extends Component {
     return (
       <form onSubmit={this.props.handleSubmitPlot}>
         <textarea
+          rows="4"
+          cols="50"
           id="plot"
           name="plot"
           value={this.state.plot}

@@ -13,12 +13,12 @@
   "author": "Sandeep Raveesh",
   "license": "ISC",
   "dependencies": {
-    "bootstrap3": "^3.3.5",
     "express": "^4.16.3",
     "react": "^16.5.2",
     "react-dom": "^16.5.2",
     "socket.io-client": "^2.1.1",
-    "socket.io-server": "^1.0.0-b"
+    "socket.io-server": "^1.0.0-b",
+    "universal-cookie": "^3.0.4"
   },
   "devDependencies": {
     "@babel/core": "^7.0.0",

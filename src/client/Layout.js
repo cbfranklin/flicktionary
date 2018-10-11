@@ -11,9 +11,9 @@ class Layout extends Component {
         <div className="navbar navbar-inverse">
           <div className="navbar-inner">
             <div className="container">
-              <p className="brand" href="#">
+              <h1 className="brand" href="#">
                 Flicktionary
-              </p>
+              </h1>
             </div>
           </div>
         </div>
