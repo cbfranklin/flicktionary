@@ -88,6 +88,15 @@ class GameBoard extends Component {
     });
   };
 
+  handleChangePlot = e => {
+    console.log("handleChangePlot", e.target.value);
+    this.setState({
+        plot: e.target.value
+      },
+      () => console.log(this.state.plot)
+    );
+  };
+  
   handleSubmitPlot = e => {
     e.preventDefault();
     const { title } = this.state.game.round
