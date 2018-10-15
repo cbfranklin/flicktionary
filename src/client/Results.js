@@ -14,29 +14,29 @@ class Results extends Component {
       return users[userIndex];
     };
     const Plots = () => {
-      return <ul className="list-group">
-          {plots.map((plot, i) => <li className="list-group-item" key={i}>
+      return (
+        <ul className="list-group">
+          {plots.map((plot, i) => (
+            <li className="list-group-item" key={i}>
               <div className={plot.isReal ? "alert alert-success" : undefined}>
-                {plot.isReal && <h3>The real plot</h3>}
+                {plot.isReal && <h3>The real plot!</h3>}
                 <ul className="list-group">
                   <li className="list-group-item">
-                    Author
-                    <span className="badge">
-                      {(getUserByID(plot.creator) &&
-                        getUserByID(plot.creator).username) ||
-                        "??"}
-                    </span>
+                    {plot.isReal
+                      ? "The real plot!"
+                      : `Written By: ${(getUserByID(plot.creator) &&
+                          getUserByID(plot.creator).username) ||
+                          "??"}`}
                   </li>
-                  <li className="list-group-item">
-                    Votes
-                    <span className="badge">{plot.votes}</span>
-                  </li>
+                  <li className="list-group-item">Votes: {plot.votes}</li>
                   <br />
                   <li className="list-group-item">{plot.text}</li>
                 </ul>
               </div>
-            </li>)}
-        </ul>;
+            </li>
+          ))}
+        </ul>
+      );
     };
 
     const NewRound = () => {

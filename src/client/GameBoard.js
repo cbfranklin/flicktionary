@@ -1,15 +1,19 @@
 import React, { Component } from "react";
 
 import io from "socket.io-client";
+import Cookies from 'universal-cookie';
 
 import ChooseFilm from "./components/chooseFilm";
 import AcceptFilm from "./components/acceptFilm";
 import WritePlot from "./WritePlot";
-// import UserList from "./UserList";
-// import SetUsername from "./SetUsername";
+import UserList from "./UserList";
+import NameEditor from "./NameEditor";
 import Lobby from "./Lobby";
 import VoteForPlot from "./VoteForPlot";
 import Results from "./Results";
+import ErrorBoundary from "./ErrorBoundary";
+
+const cookies = new Cookies();
 
 const socket = io("localhost:3001");
 
@@ -20,13 +24,24 @@ class GameBoard extends Component {
     this.state = {
       game: null,
       myUserIndex: null,
-      plot: ""
+      plot: "",
+      plotVoted: false
     };
 
     this.handleChangePlot = this.handleChangePlot.bind(this);
 
+    if (cookies.get("username")) {
+      socket.emit("username-set", {
+        username: cookies.get("username")
+      });
+    }
+
     socket.on("game-update", function(data) {
       updateGame(data.game, socket.id);
+    });
+
+    socket.on("random-films", function(data) {
+      updateRandomFilms(data.randomFilms);
     });
 
     const updateGame = (game, socketID) => {
@@ -41,6 +56,14 @@ class GameBoard extends Component {
         () => console.log(`Game updated`, this.state)
       );
     };
+    const updateRandomFilms = randomFilms => {
+      this.setState(
+        {
+          randomFilms: randomFilms
+        },
+        () => console.log(`Set random films`, this.state.randomFilms)
+      );
+    };
   }
 
   handleStartGame() {
@@ -48,16 +71,31 @@ class GameBoard extends Component {
       stage: "choose-film"
     });
   }
-  handleChooseFilm = e => {
+
+  handleSubmitName = e => {
     e.preventDefault();
-    socket.emit("film-chosen", {
-      title: "The Adventures of Ford Fairlane",
-      plot:
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris mollis a ante eget iaculis, egestas enim a felis cursus tincidunt."
-    });
+    const formData = new FormData(e.target);
+    for (var [key, value] of formData.entries()) {
+      if (key === "username") {
+        console.log("username", value);
+        socket.emit("username-set", {
+          username: value
+        });
+        cookies.set("username", value, { path: "/" });
+      }
+    }
+  };
+  handleRandomFilmRequest = () => {
+    socket.emit("random-films-requested");
+  };
+  handleChooseFilm = i => {
+    // e.preventDefault();
+    const film = this.state.randomFilms[i];
+    socket.emit("film-chosen", film);
   };
   handleAcceptFilm = e => {
     e.preventDefault();
+
     let accepted;
     if (e.target.value === "accept") {
       accepted = true;
@@ -66,7 +104,8 @@ class GameBoard extends Component {
       (accepted = false), console.log("declined");
     }
     this.setState({
-      filmAccepted: this.state.game.round.title
+      filmAccepted: this.state.game.round.title,
+      plotVoted: false
     });
     socket.emit("film-accepted", {
       accept: accepted
@@ -104,14 +143,15 @@ class GameBoard extends Component {
     socket.emit("plot-voted", {
       plot: e.target.value
     });
-  }
+  };
   handleNewRound = () => {
+    console.log("new round");
     socket.emit("new-round");
-  }
+  };
   render() {
     const game = this.state.game;
     // make sure socket is connected and game obj exists before rendering
-    if (game) {
+    if (game && this.state.itsUserIndex) {
       const username = game.users[this.state.myUserIndex].username;
       const it = game.users[this.state.itsUserIndex].username;
       const iAmIt = game.users[this.state.myUserIndex].it;
@@ -126,6 +166,7 @@ class GameBoard extends Component {
               it={it}
               handleStartGame={this.handleStartGame}
               myUserIndex={this.state.myUserIndex}
+              voteReset={this.voteReset}
             />
           );
         } else if (stage === "choose-film") {
@@ -134,6 +175,8 @@ class GameBoard extends Component {
               it={it}
               iAmIt={iAmIt}
               handleChooseFilm={this.handleChooseFilm}
+              handleRandomFilmRequest={this.handleRandomFilmRequest}
+              randomFilms={this.state.randomFilms}
             />
           );
         } else if (stage === "accept-film") {
@@ -186,7 +229,7 @@ class GameBoard extends Component {
             <section>
               <div className="container">
                 <div className="row">
-                  <div className="col-xs-12">
+                  <div className="col-sm-9">
                     <p>No component for this stage...</p>
                   </div>
                 </div>
@@ -200,8 +243,31 @@ class GameBoard extends Component {
           <section>
             <div className="container">
               <div className="row">
+                <div className="col-sm-3">
+                  <UserList users={game.users} />
+                </div>
+              </div>
+            </div>
+          </section>
+          <section>
+            <div className="container">
+              <div className="row">
                 <div className="col-xs-12">
-                  <Stage stage={game.round.stage} />
+                  <ErrorBoundary>
+                    <Stage stage={game.round.stage} />
+                  </ErrorBoundary>
+                </div>
+              </div>
+            </div>
+          </section>
+          <section>
+            <div className="container">
+              <div className="row">
+                <div className="col-xs-12">
+                  <NameEditor
+                    handleSubmitName={this.handleSubmitName}
+                    username={username}
+                  />
                 </div>
               </div>
             </div>

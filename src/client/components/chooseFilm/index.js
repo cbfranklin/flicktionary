@@ -46,16 +46,16 @@ class ChooseFilm extends Component {
             <Loader it={it} />
           </div>
         </div>
-      ) 
+      )
     }
-        
+
     return (
       <div className="row">
         <div className="col-xs-12">
           <FilmList filmList={filmList} />
         </div>
       </div>
-    ) 
+    )
   }
 }
 

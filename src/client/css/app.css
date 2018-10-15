@@ -7,6 +7,7 @@
 textarea{
   width:100%;
   min-height:100px;
+  color:#333;
 }
 
 .flex-center{
@@ -22,5 +23,13 @@ textarea{
 button{
   box-shadow:none!important;
 } */
+
+button{
+  margin-bottom:1em;
+}
 /* enable crazy-go-nuts animation */
 /* body { visibility: hidden } */
+
+.btn.form-control{
+  height:auto;
+}
