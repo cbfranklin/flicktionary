@@ -3,8 +3,8 @@ import React, { Component } from "react";
 import io from "socket.io-client";
 import Cookies from 'universal-cookie';
 
-import ChooseFilm from "./ChooseFilm";
-import AcceptFilm from "./AcceptFilm";
+import ChooseFilm from "./components/chooseFilm";
+import AcceptFilm from "./components/acceptFilm";
 import WritePlot from "./WritePlot";
 import UserList from "./UserList";
 import NameEditor from "./NameEditor";
