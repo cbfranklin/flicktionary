@@ -7,7 +7,7 @@ class UserList extends Component {
   render() {
     const userList = this.props.users.map((user, i) => (
       <li className={user.it ? "user-is-it" : undefined} key={i}>
-        {user.username}
+        {user.username}{' ['}{user.points}{']'}
       </li>
     ));
 

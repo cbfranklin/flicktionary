@@ -1,12 +1,13 @@
 import React, { Component } from "react";
 
 import io from "socket.io-client";
+import Cookies from 'universal-cookie';
 
 import ChooseFilm from "./ChooseFilm";
 import AcceptFilm from "./AcceptFilm";
 import WritePlot from "./WritePlot";
-// import UserList from "./UserList";
-// import SetUsername from "./SetUsername";
+import UserList from "./UserList";
+import NameEditor from "./NameEditor";
 import Lobby from "./Lobby";
 import VoteForPlot from "./VoteForPlot";
 import Results from "./Results";
@@ -20,7 +21,9 @@ const gameStages = [
   "write-plot",
   "vote-for-plot",
   "results",
-]
+];
+
+const cookies = new Cookies();
 
 const socket = io("localhost:3001");
 
@@ -31,11 +34,23 @@ class GameBoard extends Component {
     this.state = {
       game: null,
       myUserIndex: null,
-      plot: ""
+      plot: "",
+      plotVoted: false
     };
 
+    this.handleChangePlot = this.handleChangePlot.bind(this);
+
+    if (cookies.get("username")) {
+      socket.emit("username-set", {
+        username: cookies.get("username")
+      });
+    }
     socket.on("game-update", function(data) {
       updateGame(data.game, socket.id);
+    });
+
+    socket.on("random-films", function(data) {
+      updateRandomFilms(data.randomFilms);
     });
 
     const updateGame = (game, socketID) => {
@@ -49,21 +64,40 @@ class GameBoard extends Component {
       }
       this.setState(updatedState, () => console.log(`Game updated`, this.state));
     };
+    const updateRandomFilms = randomFilms => {
+      this.setState(
+        {
+          randomFilms: randomFilms
+        },
+        () => console.log(`Set random films`, this.state.randomFilms)
+      );
+    };
   }
 
   handleStartGame() {
     socket.emit("stage-set", {
       stage: "choose-film"
     });
-  }
-
-  handleChooseFilm = e => {
+  };
+  handleSubmitName = e => {
     e.preventDefault();
-    const film = {
-    	title: "The Adventures of Ford Fairlane",
-    	plot: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris mollis a ante eget iaculis, egestas enim a felis cursus tincidunt."
+    const formData = new FormData(e.target);
+    for (var [key, value] of formData.entries()) {
+      if (key === "username") {
+        console.log("username", value);
+        socket.emit("username-set", {
+          username: value
+        });
+        cookies.set("username", value, { path: "/" });
+      }
     }
-
+  };
+  handleRandomFilmRequest = () => {
+    socket.emit("random-films-requested");
+  };
+  handleChooseFilm = i => {
+    // e.preventDefault();
+    const film = this.state.randomFilms[i];
     socket.emit("film-chosen", film);
   };
 
@@ -81,6 +115,7 @@ class GameBoard extends Component {
 
     this.setState({
       filmAccepted: title
+      plotVoted: false
     });
     
     socket.emit("film-accepted", {
@@ -123,8 +158,8 @@ class GameBoard extends Component {
       plot: e.target.value
     });
   }
-
   handleNewRound = () => {
+    console.log("new round");
     socket.emit("new-round");
   }
 

@@ -8,21 +8,27 @@ class ChooseFilm extends Component {
   }
 
   render() {
-    const { it, iAmIt } = this.props;
-    const films = [
-      {
-        title: "The Adventures of Ford Fairlane",
-        plot:
-          "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris mollis a ante eget iaculis, egestas enim a felis cursus tincidunt."
-      }
-    ];
-    const renderedFilms = films.map((film, i) => {
+    const { it, iAmIt, randomFilms, handleRandomFilmRequest } = this.props;
+    // const films = [
+    //   {
+    //     title: "Jungle 2 Jungle",
+    //     plot:
+    //       "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris mollis a ante eget iaculis, egestas enim a felis cursus tincidunt."
+    //   }
+    // ];
+    console.log({ randomFilms });
+    if (!randomFilms) {
+      handleRandomFilmRequest();
+      console.log("Requesting random films...");
+      return false;
+    }
+    const renderedFilms = randomFilms.map((film, i) => {
       return (
         <li key={i} className="list-group-item">
           <h3>{film.title}</h3>
           <p>{film.plot}</p>
           <button
-            onClick={this.props.handleChooseFilm}
+            onClick={() => this.props.handleChooseFilm(i)}
             value={i}
             className="btn btn-primary form-control"
           >
@@ -35,12 +41,16 @@ class ChooseFilm extends Component {
       );
     });
     const FilmList = () => {
-      return (
-        <div>
-          <h2>Choose a film</h2>
-          <ul className="list-group">{renderedFilms}</ul>
-        </div>
-      );
+      if (randomFilms && renderedFilms) {
+        return (
+          <div>
+            <h2>Choose a film</h2>
+            <ul className="list-group">{renderedFilms}</ul>
+          </div>
+        );
+      } else {
+        return <h3>Loading...</h3>;
+      }
     };
 
     const Waiting = () => (
