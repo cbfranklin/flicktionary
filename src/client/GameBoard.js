@@ -11,7 +11,17 @@ import NameEditor from "./NameEditor";
 import Lobby from "./Lobby";
 import VoteForPlot from "./VoteForPlot";
 import Results from "./Results";
-import ErrorBoundary from "./ErrorBoundary";
+import NoConnection from "./loaders/NoConnection";
+import NoComponent from "./loaders/NoComponent";
+
+const gameStages = [
+  "lobby",
+  "choose-film",
+  "accept-film",
+  "write-plot",
+  "vote-for-plot",
+  "results",
+];
 
 const cookies = new Cookies();
 
@@ -35,7 +45,6 @@ class GameBoard extends Component {
         username: cookies.get("username")
       });
     }
-
     socket.on("game-update", function(data) {
       updateGame(data.game, socket.id);
     });
@@ -45,16 +54,15 @@ class GameBoard extends Component {
     });
 
     const updateGame = (game, socketID) => {
-      const myUserIndex = game.users.findIndex(user => user.id === socketID);
-      const itsUserIndex = game.users.findIndex(user => user.it === true);
-      this.setState(
-        {
-          game: game,
-          myUserIndex: myUserIndex,
-          itsUserIndex: itsUserIndex
-        },
-        () => console.log(`Game updated`, this.state)
-      );
+      const { users } = game
+      const myUserIndex = users.findIndex(user => user.id === socketID);
+      const itsUserIndex = users.findIndex(user => user.it === true);
+      const updatedState = {
+      	game,
+      	myUserIndex,
+      	itsUserIndex,
+      }
+      this.setState(updatedState, () => console.log(`Game updated`, this.state));
     };
     const updateRandomFilms = randomFilms => {
       this.setState(
@@ -70,8 +78,7 @@ class GameBoard extends Component {
     socket.emit("stage-set", {
       stage: "choose-film"
     });
-  }
-
+  };
   handleSubmitName = e => {
     e.preventDefault();
     const formData = new FormData(e.target);
@@ -93,40 +100,46 @@ class GameBoard extends Component {
     const film = this.state.randomFilms[i];
     socket.emit("film-chosen", film);
   };
+
   handleAcceptFilm = e => {
     e.preventDefault();
+    const { title } = this.state.game.round
+    const { value } = e.target
+    const accepted = value === 'accept' ? true : false
 
-    let accepted;
-    if (e.target.value === "accept") {
-      accepted = true;
-      console.log("accepted");
+    if (!accepted) {
+      console.log("declined")
     } else {
-      (accepted = false), console.log("declined");
+      console.log("accepted")
     }
+
     this.setState({
-      filmAccepted: this.state.game.round.title,
+      filmAccepted: title
       plotVoted: false
     });
+    
     socket.emit("film-accepted", {
       accept: accepted
     });
   };
+
   handleChangePlot = e => {
     console.log("handleChangePlot", e.target.value);
-    this.setState(
-      {
+    this.setState({
         plot: e.target.value
       },
       () => console.log(this.state.plot)
     );
   };
+  
   handleSubmitPlot = e => {
     e.preventDefault();
-    this.setState({
-      plotSubmitted: this.state.game.round.title
-    });
+    const { title } = this.state.game.round
     const formData = new FormData(e.target);
-    for (var [key, value] of formData.entries()) {
+    this.setState({
+      plotSubmitted: title
+    });
+    for (const [key, value] of formData.entries()) {
       if (key === "plot") {
         console.log("plot", value);
         socket.emit("plot-written", {
@@ -135,6 +148,7 @@ class GameBoard extends Component {
       }
     }
   };
+
   handleVotePlot = e => {
     e.preventDefault();
     this.setState({
@@ -143,150 +157,121 @@ class GameBoard extends Component {
     socket.emit("plot-voted", {
       plot: e.target.value
     });
-  };
+  }
   handleNewRound = () => {
     console.log("new round");
     socket.emit("new-round");
-  };
+  }
+
+  // this is my router, there are many like it but this one is mine
+  renderStage = game => {
+    const { round, users } = game
+    const { plots, stage, title } = round
+    const username = users[this.state.myUserIndex].username;
+    const it = users[this.state.itsUserIndex].username;
+    const iAmIt = users[this.state.myUserIndex].it;
+
+    if (gameStages.indexOf(stage) < 0) {
+      return <NoComponent />
+    }
+    
+    if (stage === "lobby") {
+      return (
+        <Lobby
+          users={users}
+          iAmIt={iAmIt}
+          it={it}
+          handleStartGame={this.handleStartGame}
+          myUserIndex={this.state.myUserIndex}
+        />
+      );
+    } 
+    
+    if (stage === "choose-film") {
+      return (
+        <ChooseFilm
+          it={it}
+          iAmIt={iAmIt}
+          handleChooseFilm={this.handleChooseFilm}
+        />
+      );
+    } 
+    
+    if (stage === "accept-film") {
+      return (
+        <AcceptFilm
+          it={it}
+          iAmIt={iAmIt}
+          handleAcceptFilm={this.handleAcceptFilm}
+          title={title}
+          filmAccepted={this.state.filmAccepted}
+        />
+      );
+    } 
+    
+    if (stage === "write-plot") {
+      return (
+        <WritePlot
+          it={it}
+          iAmIt={iAmIt}
+          title={title}
+          handleSubmitPlot={this.handleSubmitPlot}
+          handleChangePlot={this.handleChangePlot}
+          plotSubmitted={this.state.plotSubmitted}
+          plot={this.state.plot}
+        />
+      );
+    } 
+    
+    if (stage === "vote-for-plot") {
+      return (
+        <VoteForPlot
+          it={it}
+          iAmIt={iAmIt}
+          title={title}
+          plots={plots}
+          handleVotePlot={this.handleVotePlot}
+          plotVoted={this.state.plotVoted}
+        />
+      );
+    } 
+    
+    if (stage === "results") {
+      return (
+        <Results
+          it={it}
+          iAmIt={iAmIt}
+          title={title}
+          plots={plots}
+          users={users}
+          handleNewRound={this.handleNewRound}
+        />
+      );
+    } 
+  }
+
   render() {
     const game = this.state.game;
     // make sure socket is connected and game obj exists before rendering
-    if (game && this.state.itsUserIndex) {
-      const username = game.users[this.state.myUserIndex].username;
-      const it = game.users[this.state.itsUserIndex].username;
-      const iAmIt = game.users[this.state.myUserIndex].it;
-      // this is my router, there are many like it but this one is mine
-      const Stage = () => {
-        const stage = game.round.stage;
-        if (stage === "lobby") {
-          return (
-            <Lobby
-              users={game.users}
-              iAmIt={iAmIt}
-              it={it}
-              handleStartGame={this.handleStartGame}
-              myUserIndex={this.state.myUserIndex}
-              voteReset={this.voteReset}
-            />
-          );
-        } else if (stage === "choose-film") {
-          return (
-            <ChooseFilm
-              it={it}
-              iAmIt={iAmIt}
-              handleChooseFilm={this.handleChooseFilm}
-              handleRandomFilmRequest={this.handleRandomFilmRequest}
-              randomFilms={this.state.randomFilms}
-            />
-          );
-        } else if (stage === "accept-film") {
-          return (
-            <AcceptFilm
-              it={it}
-              iAmIt={iAmIt}
-              handleAcceptFilm={this.handleAcceptFilm}
-              title={game.round.title}
-              filmAccepted={this.state.filmAccepted}
-            />
-          );
-        } else if (stage === "write-plot") {
-          return (
-            <WritePlot
-              it={it}
-              iAmIt={iAmIt}
-              title={game.round.title}
-              handleSubmitPlot={this.handleSubmitPlot}
-              handleChangePlot={this.handleChangePlot}
-              plotSubmitted={this.state.plotSubmitted}
-              plot={this.state.plot}
-              title={game.round.title}
-            />
-          );
-        } else if (stage === "vote-for-plot") {
-          return (
-            <VoteForPlot
-              it={it}
-              iAmIt={iAmIt}
-              title={game.round.title}
-              plots={game.round.plots}
-              handleVotePlot={this.handleVotePlot}
-              plotVoted={this.state.plotVoted}
-            />
-          );
-        } else if (stage === "results") {
-          return (
-            <Results
-              it={it}
-              iAmIt={iAmIt}
-              title={game.round.title}
-              plots={game.round.plots}
-              users={game.users}
-              handleNewRound={this.handleNewRound}
-            />
-          );
-        } else {
-          return (
-            <section>
-              <div className="container">
-                <div className="row">
-                  <div className="col-sm-9">
-                    <p>No component for this stage...</p>
-                  </div>
-                </div>
-              </div>
-            </section>
-          );
-        }
-      };
-      return (
-        <div>
-          <section>
-            <div className="container">
-              <div className="row">
-                <div className="col-sm-3">
-                  <UserList users={game.users} />
-                </div>
-              </div>
-            </div>
-          </section>
-          <section>
-            <div className="container">
-              <div className="row">
-                <div className="col-xs-12">
-                  <ErrorBoundary>
-                    <Stage stage={game.round.stage} />
-                  </ErrorBoundary>
-                </div>
-              </div>
-            </div>
-          </section>
-          <section>
-            <div className="container">
-              <div className="row">
-                <div className="col-xs-12">
-                  <NameEditor
-                    handleSubmitName={this.handleSubmitName}
-                    username={username}
-                  />
-                </div>
-              </div>
-            </div>
-          </section>
-        </div>
-      );
-    } else {
-      return (
+    if (!game) {
+      return <NoConnection />
+    }
+  
+    const gameStage = this.renderStage(game)
+
+    return (
+      <div>
         <section>
           <div className="container">
             <div className="row">
               <div className="col-xs-12">
-                <p>Waiting for connection...</p>
+                {gameStage}
               </div>
             </div>
           </div>
         </section>
-      );
-    }
+      </div>
+    );
   }
 }
 
