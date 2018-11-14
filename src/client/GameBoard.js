@@ -115,9 +115,8 @@ class GameBoard extends Component {
 
     this.setState({
       filmAccepted: title
-      plotVoted: false
     });
-    
+
     socket.emit("film-accepted", {
       accept: accepted
     });
@@ -131,7 +130,7 @@ class GameBoard extends Component {
       () => console.log(this.state.plot)
     );
   };
-  
+
   handleSubmitPlot = e => {
     e.preventDefault();
     const { title } = this.state.game.round
@@ -174,7 +173,7 @@ class GameBoard extends Component {
     if (gameStages.indexOf(stage) < 0) {
       return <NoComponent />
     }
-    
+
     if (stage === "lobby") {
       return (
         <Lobby
@@ -185,8 +184,8 @@ class GameBoard extends Component {
           myUserIndex={this.state.myUserIndex}
         />
       );
-    } 
-    
+    }
+
     if (stage === "choose-film") {
       return (
         <ChooseFilm
@@ -195,8 +194,8 @@ class GameBoard extends Component {
           handleChooseFilm={this.handleChooseFilm}
         />
       );
-    } 
-    
+    }
+
     if (stage === "accept-film") {
       return (
         <AcceptFilm
@@ -207,8 +206,8 @@ class GameBoard extends Component {
           filmAccepted={this.state.filmAccepted}
         />
       );
-    } 
-    
+    }
+
     if (stage === "write-plot") {
       return (
         <WritePlot
@@ -221,8 +220,8 @@ class GameBoard extends Component {
           plot={this.state.plot}
         />
       );
-    } 
-    
+    }
+
     if (stage === "vote-for-plot") {
       return (
         <VoteForPlot
@@ -234,8 +233,8 @@ class GameBoard extends Component {
           plotVoted={this.state.plotVoted}
         />
       );
-    } 
-    
+    }
+
     if (stage === "results") {
       return (
         <Results
@@ -247,7 +246,7 @@ class GameBoard extends Component {
           handleNewRound={this.handleNewRound}
         />
       );
-    } 
+    }
   }
 
   render() {
@@ -256,7 +255,7 @@ class GameBoard extends Component {
     if (!game) {
       return <NoConnection />
     }
-  
+
     const gameStage = this.renderStage(game)
 
     return (

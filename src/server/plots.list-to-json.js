@@ -2,7 +2,7 @@ const readline = require("readline");
 const fs = require("fs");
 
 const readliner = readline.createInterface({
-  input: fs.createReadStream("./plot.list"),
+  input: fs.createReadStream("../../node_modules/plots/plot.list"),
   crlfDelay: Infinity
 });
 

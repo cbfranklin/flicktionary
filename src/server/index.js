@@ -6,9 +6,8 @@ const io = require("socket.io")(server);
 const path = require("path");
 
 const filmsPath = path.join(__dirname, "plots.json");
+console.log(filmsPath)
 const films = JSON.parse(fs.readFileSync(filmsPath, "utf8"));
-
-console.log(films);
 
 const randomFilm = () => {
   console.log(films[Math.floor(Math.random() * films.length)]);

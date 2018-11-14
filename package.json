@@ -39,6 +39,7 @@
     "html-webpack-include-assets-plugin": "^1.0.5",
     "html-webpack-plugin": "^3.2.0",
     "nodemon": "^1.17.3",
+    "plots": "git+https://connor3ep@bitbucket.org/connor3ep/plots.git",
     "style-loader": "^0.23.0",
     "url-loader": "^1.0.1",
     "webpack": "^4.5.0",
